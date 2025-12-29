@@ -17,6 +17,12 @@ export class UserService {
         return users
     }
 
+    async findByEmail(email: string) {
+        return await this.userRepo.findOne({
+            where: { email:email },
+        });
+    }
+
     async create(createUserDto: CreateUserDto) {
         const user = this.userRepo.create(createUserDto)
         return await this.userRepo.save(user)
@@ -38,7 +44,6 @@ export class UserService {
             where: { id:id },
           });
 
-        console.log("I am here now "+ id);
         if (!user)
             throw new NotFoundException()
         return this.userRepo.delete(id)
