@@ -13,7 +13,7 @@ export class UserController {
     @UseGuards(OptionalJwtAuthGuard)
     users(@Request() request) {
         // Get all users from db
-        console.log(request.user)
+        //console.log(request.user)
         return this.userService.users(request.user)
     }
 
@@ -24,7 +24,7 @@ export class UserController {
     }
 
     @Patch(':id')
-    updateUser(@Param(':id')id :string, @Body()updateUserDto: UpdateUserDto ) {
+    updateUser(@Param('id')id :string, @Body()updateUserDto: UpdateUserDto ) {
         // Update user
         return this.userService.update(id, updateUserDto)
     }

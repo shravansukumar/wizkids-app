@@ -32,6 +32,7 @@ export class UserService {
     async findByEmail(email: string) {
         return await this.userRepo.findOne({
             where: { email:email },
+            select: ['id','password','email','phoneNumber']
         });
     }
 

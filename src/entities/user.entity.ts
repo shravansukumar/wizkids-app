@@ -19,7 +19,7 @@ export class User {
     @Column()
     phoneNumber: string;
 
-    @Column()
+    @Column({ select: false })
     password: string;
 
     @Column({ default: false })
@@ -42,6 +42,11 @@ export class User {
         }
     }
 
+    @BeforeInsert()
+    async hashPassword() {
+        this.password = await bcrypt.hash(this.password,10)
+    }
+
     @BeforeUpdate()
     setFiredAtOnUpdate() {
         // false to true
@@ -54,10 +59,4 @@ export class User {
             this.firedAt = null;
         }
     }
-
-    @BeforeInsert()
-    async hashPassword() {
-        this.password = await bcrypt.hash(this.password,10)
-    }
-
 }
