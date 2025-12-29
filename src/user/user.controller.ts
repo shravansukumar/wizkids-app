@@ -1,16 +1,20 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Request, UseGuards } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/createUserDto';
 import { UpdateUserDto } from './dto/updateUserDto';
+import { JwtAuthGuard } from 'src/auth/guard/jwt.guard.auth';
+import { OptionalJwtAuthGuard } from 'src/auth/guard/jwt.optional.guard.auth';
 
 @Controller('user')
 export class UserController {
     constructor(private readonly userService: UserService){}
 
     @Get()
-    users() {
+    @UseGuards(OptionalJwtAuthGuard)
+    users(@Request() request) {
         // Get all users from db
-        return this.userService.users()
+        console.log(request.user)
+        return this.userService.users(request.user)
     }
 
     @Post()
@@ -30,4 +34,17 @@ export class UserController {
         return this.userService.delete(id)
     }
 
+    @UseGuards(JwtAuthGuard)
+    @Post('fire/:id')
+    fire(@Param('id')id:string, @Request() request) {
+        return this.userService.fireUnFire(id, request.user.id, true)
+        // return this.userService.fire(id, request.user.id)
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Post('unfire/:id')
+    unFire(@Param('id')id:string, @Request() request) {
+        // return this.userService.unFire(id, request.user.id)
+        return this.userService.fireUnFire(id, request.user.id, false)
+    }
 }

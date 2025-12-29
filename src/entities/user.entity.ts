@@ -1,4 +1,4 @@
-import { BeforeInsert, Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { BeforeInsert, Column, Entity, PrimaryGeneratedColumn, AfterLoad, BeforeUpdate } from "typeorm";
 import * as bcrypt from 'bcrypt';
 
 @Entity()
@@ -22,8 +22,42 @@ export class User {
     @Column()
     password: string;
 
+    @Column({ default: false })
+    isFired: boolean;
+
+    @Column({ type: 'timestamp', nullable: true })
+    firedAt: Date | null;
+
+    private previousIsFired: boolean;
+
+    @AfterLoad()
+    loadPreviousState() {
+        this.previousIsFired = this.isFired;
+    }
+
+    @BeforeInsert()
+    setFiredAtOnInsert() {
+        if (this.isFired) {
+            this.firedAt = new Date();
+        }
+    }
+
+    @BeforeUpdate()
+    setFiredAtOnUpdate() {
+        // false to true
+        if (!this.previousIsFired && this.isFired) {
+            this.firedAt = new Date();
+        }
+
+        // true to false 
+        if (this.previousIsFired && !this.isFired) {
+            this.firedAt = null;
+        }
+    }
+
     @BeforeInsert()
     async hashPassword() {
         this.password = await bcrypt.hash(this.password,10)
     }
+
 }
