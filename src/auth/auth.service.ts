@@ -15,11 +15,7 @@ export class AuthService {
         if (!user)
             throw new NotFoundException()
 
-        console.log({
-            user: user
-        })
         const isValidUser = await bcrypt.compare(password, user.password)
-        console.log(isValidUser)
         if (!isValidUser) {
             throw new UnauthorizedException()
         }

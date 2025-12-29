@@ -20,7 +20,6 @@ export class AuthController {
     @UseGuards(JwtAuthGuard)
     @Get('impEndPoint')
     getPro(@Request() request) {
-        console.log("Hello from the other side")
         return request.user;
     }
 }

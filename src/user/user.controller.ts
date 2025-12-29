@@ -13,7 +13,6 @@ export class UserController {
     @UseGuards(OptionalJwtAuthGuard)
     users(@Request() request) {
         // Get all users from db
-        //console.log(request.user)
         return this.userService.users(request.user)
     }
 
